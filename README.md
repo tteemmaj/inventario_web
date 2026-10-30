@@ -13,8 +13,8 @@ Para que el sistema funcione correctamente, tanto la aplicación de escritorio c
 
 | Carné | Nombre |
 | :--- | :--- |
-| *[0903-25-15843]* | *[Juan Diego Berdúo Témaj]* |
-| *[0903-25-7508]* | *[Jorge Luis Juárez Orozco]* |
-| *[0903-25-21440]* | *[Jeser Aziel Fuentes Pérez]* |
-| *[0903-25-15941]* | *[José Julián Miranda Orozco]* |
-| *[0903-25-18329]* | *[Ian Steven Barrios García]* |
+| *0903-25-15843* | *Juan Diego Berdúo Témaj* |
+| *0903-25-7508* | *Jorge Luis Juárez Orozco* |
+| *0903-25-21440* | *Jeser Aziel Fuentes Pérez* |
+| *0903-25-15941* | *José Julián Miranda Orozco* |
+| *0903-25-18329* | *Ian Steven Barrios García* |
