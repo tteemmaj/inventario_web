@@ -1,0 +1,162 @@
+section.panel {
+  background: var(--papel);
+  border: 2px solid var(--menta);
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  border-radius: 14px;
+}
+
+button,
+.btn {
+  font: inherit;
+  font-weight: 500;
+  padding: .55rem 1.1rem;
+  border: 0;
+  border-radius: 4px;
+  background: var(--menta);
+  color: var(--tinta);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+button:hover {
+  background: #a2d1b4;
+}
+
+button.primario {
+  background: var(--menta-osc);
+  color: #fff;
+}
+
+button.primario:hover {
+  background: #244a37;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem 1rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.filtros label {
+  display: flex;
+  flex-direction: column;
+  font-size: .85rem;
+  font-weight: 500;
+  gap: .2rem;
+}
+
+input,
+select {
+  font: inherit;
+  padding: .45rem .6rem;
+  border: 1px solid var(--linea);
+  border-radius: 4px;
+  background: #fff;
+  min-width: 9rem;
+}
+
+.tabla {
+  overflow: auto;
+  max-height: 420px;
+  border: 1px solid var(--linea);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: .92rem;
+  background: #fff;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  background: var(--menta);
+  text-align: left;
+  padding: .55rem .7rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+td {
+  padding: .5rem .7rem;
+  border-top: 1px solid #eee5dd;
+}
+
+td.n,
+th.n {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+tbody tr:hover {
+  background: #f4faf6;
+}
+
+.vacio {
+  padding: 1.5rem;
+  color: var(--gris);
+  text-align: center;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+}
+
+.kpi b {
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+
+.kpi span {
+  color: var(--gris);
+  font-size: .9rem;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem;
+}
+
+.kpis .kpi {
+  border: 2px solid var(--menta);
+  padding: .8rem 1rem;
+  background: var(--papel);
+}
+
+.etq {
+  display: inline-block;
+  padding: .1rem .5rem;
+  border-radius: 3px;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.etq.VENTA {
+  background: var(--menta);
+}
+
+.etq.COMPRA {
+  background: #f0d9a8;
+}
+
+.bajo {
+  color: var(--alerta);
+  font-weight: 700;
+}
+
+.error {
+  background: #fbe9e2;
+  border: 1px solid var(--alerta);
+  color: var(--alerta);
+  padding: .7rem 1rem;
+  margin-bottom: 1rem;
+  display: none;
+}

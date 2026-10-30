@@ -1,0 +1,92 @@
+/* Base: variables, reset, tipografía, cabecera y navegación */
+:root {
+  --crema: #f6ece4;
+  --menta: #b3dcc3;
+  --menta-osc: #2f5d46;
+  --tinta: #26302b;
+  --gris: #6b746f;
+  --linea: #d9cfc6;
+  --papel: #fffdfb;
+  --alerta: #b4532a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Figtree, system-ui, sans-serif;
+  color: var(--tinta);
+  background: var(--crema);
+  line-height: 1.45;
+}
+
+h2 {
+  font-size: 1.6rem;
+  margin: 0 0 1rem;
+}
+
+h3 {
+  font-size: 1.05rem;
+  margin: 0 0 .7rem;
+}
+
+main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem 2rem;
+  padding: .9rem 1.5rem;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+header h1 {
+  font-size: 1.15rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+nav {
+  display: flex;
+  gap: .4rem;
+  margin-left: auto;
+}
+
+nav a {
+  padding: .5rem 1.1rem;
+  border-radius: 4px;
+  color: var(--tinta);
+  text-decoration: none;
+  font-weight: 500;
+  background: var(--menta);
+}
+
+nav a[aria-current=page] {
+  background: var(--menta-osc);
+  color: #fff;
+}
+
+nav a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--menta-osc);
+  outline-offset: 2px;
+}
+
+@media(max-width: 800px) {
+  header {
+    padding: .8rem 1rem;
+  }
+  
+  nav {
+    margin-left: 0;
+  }
+}

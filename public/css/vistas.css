@@ -1,0 +1,48 @@
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.fecha {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-transform: capitalize;
+}
+
+.grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.g-inicio {
+  grid-template-columns: minmax(240px, 1fr) 2fr;
+}
+
+.g-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.accesos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+@media(max-width: 800px) {
+  .g-inicio,
+  .g-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+#t-hist {
+  max-height: 560px;
+}
+
+.kpi-sep {
+  margin-top: .8rem;
+}

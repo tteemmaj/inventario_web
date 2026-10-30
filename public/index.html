@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ventanas de PVC ALVIDE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/componentes.css">
+<link rel="stylesheet" href="css/vistas.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>Ventanas de PVC ALVIDE</h1>
+  <nav aria-label="Secciones">
+    <a href="#inicio">Inicio</a>
+    <a href="#reportes">Reportes</a>
+    <a href="#historial">Historial</a>
+  </nav>
+</header>
+
+<main>
+  <div class="error" id="error" role="alert"></div>
+
+  <!-- INICIO -->
+  <div id="v-inicio" hidden>
+    <div class="fecha" id="fecha-hoy"></div>
+    <div class="grid g-inicio">
+      <section class="panel">
+        <h3>Resumen de ventas del día</h3>
+        <div class="kpi">
+          <span>Ventas nuevas</span>
+          <b id="ini-n">–</b>
+        </div>
+        <div class="kpi kpi-sep">
+          <span>Total hoy</span>
+          <b id="ini-total">–</b>
+        </div>
+      </section>
+      <section class="panel">
+        <h3>Accesos directos</h3>
+        <div class="accesos">
+          <a class="btn" href="#reportes">Ver reportes</a>
+          <a class="btn" href="#historial">Ver historial</a>
+        </div>
+      </section>
+    </div>
+    <section class="panel">
+      <h3>Inventario crítico</h3>
+      <div class="grid g-2">
+        <div>
+          <h3 style="font-size:.95rem">Stock bajo</h3>
+          <div class="tabla" id="t-bajo"></div>
+        </div>
+        <div>
+          <h3 style="font-size:.95rem">Sin productos / agotado</h3>
+          <div class="tabla" id="t-agotado"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- REPORTES -->
+  <div id="v-reportes" hidden>
+    <div class="top">
+      <h2>Reportes</h2>
+      <button id="pdf-ventas">Descargar ventas (PDF)</button>
+    </div>
+    <section class="panel">
+      <h3>Ventas por período</h3>
+      <div class="filtros">
+        <label>Desde
+          <input type="date" id="r-desde">
+        </label>
+        <label>Hasta
+          <input type="date" id="r-hasta">
+        </label>
+        <label>Método de pago
+          <select id="r-fp">
+            <option>TODOS</option>
+          </select>
+        </label>
+        <button class="primario" id="r-filtrar">Filtrar</button>
+      </div>
+      <div class="tabla" id="t-ventas"></div>
+    </section>
+    <section class="panel">
+      <h3>Resumen del período</h3>
+      <div class="kpis">
+        <div class="kpi">
+          <span>Total vendido</span>
+          <b id="k-total">–</b>
+        </div>
+        <div class="kpi">
+          <span>Ventas registradas</span>
+          <b id="k-n">–</b>
+        </div>
+        <div class="kpi">
+          <span>Promedio por venta</span>
+          <b id="k-prom">–</b>
+        </div>
+      </div>
+    </section>
+    <section class="panel">
+      <div class="top">
+        <h3>Productos más vendidos</h3>
+        <button id="pdf-top">Descargar (PDF)</button>
+      </div>
+      <div class="filtros">
+        <label>Desde
+          <input type="date" id="p-desde">
+        </label>
+        <label>Hasta
+          <input type="date" id="p-hasta">
+        </label>
+        <button class="primario" id="p-filtrar">Filtrar</button>
+      </div>
+      <div class="tabla" id="t-top"></div>
+    </section>
+  </div>
+
+  <!-- HISTORIAL -->
+  <div id="v-historial" hidden>
+    <div class="top">
+      <h2>Historial</h2>
+      <button id="pdf-hist">Descargar historial (PDF)</button>
+    </div>
+    <section class="panel">
+      <div class="filtros">
+        <label>Desde
+          <input type="date" id="h-desde">
+        </label>
+        <label>Hasta
+          <input type="date" id="h-hasta">
+        </label>
+        <label>Buscar por fecha o referencia
+          <input type="search" id="h-q" placeholder="Cliente, usuario, 28/10/2026…">
+        </label>
+        <label>Tipo de historial
+          <select id="h-tipo">
+            <option value="TODOS">TODOS</option>
+            <option value="VENTA">Ventas</option>
+            <option value="COMPRA">Compras</option>
+          </select>
+        </label>
+        <button class="primario" id="h-filtrar">Filtrar</button>
+      </div>
+      <div class="tabla" id="t-hist"></div>
+    </section>
+  </div>
+</main>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const Q = (n) => 'Q ' + Number(n || 0).toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const N = (n) => Number(n || 0).toLocaleString('es-GT', { maximumFractionDigits: 2 });
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fd = (s) => (s ? s.slice(8, 10) + '/' + s.slice(5, 7) + '/' + s.slice(0, 4) : '—');
+const hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Guatemala' });
+const mesIni = hoy.slice(0, 8) + '01';
+
+async function api(url, params = {}) {
+  const qs = new URLSearchParams(Object.entries(params).filter(([, v]) => v));
+  const r = await fetch(url + '?' + qs);
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || 'Error ' + r.status);
+  return j;
+}
+
+function aviso(msg) {
+  const e = $('#error');
+  e.textContent = msg || '';
+  e.style.display = msg ? 'block' : 'none';
+}
+
+function tabla(el, cols, filas, vacio = 'Sin resultados para este filtro.') {
+  if (!filas.length) {
+    el.innerHTML = `<div class="vacio">${vacio}</div>`;
+    return;
+  }
+  el.innerHTML = '<table><thead><tr>' + cols.map((c) => `<th class="${c.n ? 'n' : ''}">${c.h}</th>`).join('') +
+    '</tr></thead><tbody>' + filas.map((f) => '<tr>' + cols.map((c) => `<td class="${c.n ? 'n' : ''}">${c.f(f)}</td>`).join('') + '</tr>').join('') + '</tbody></table>';
+}
+
+function plano(html) {
+  const d = document.createElement('div');
+  d.innerHTML = html;
+  return d.textContent;
+}
+
+function pdf(nombre, titulo, subtitulo, cols, filas) {
+  if (!filas.length) {
+    aviso('No hay datos para descargar con este filtro.');
+    return;
+  }
+  aviso('');
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: cols.length > 4 ? 'landscape' : 'portrait', unit: 'pt', format: 'letter' });
+  doc.setFontSize(14);
+  doc.text('Ventanas de PVC ALVIDE', 40, 40);
+  doc.setFontSize(11);
+  doc.text(titulo, 40, 58);
+  doc.setFontSize(9);
+  doc.text(subtitulo + '  ·  Generado: ' + fd(hoy), 40, 72);
+  const estilos = {};
+  cols.forEach((c, i) => {
+    if (c.n) estilos[i] = { halign: 'right' };
+  });
+  doc.autoTable({
+    startY: 84,
+    head: [cols.map((c) => c.h)],
+    body: filas.map((f) => cols.map((c) => plano((c.csv || c.f)(f)))),
+    styles: { fontSize: 8, cellPadding: 4 },
+    headStyles: { fillColor: [47, 93, 70], textColor: 255 },
+    columnStyles: estilos,
+  });
+  doc.save(nombre + '.pdf');
+}
+
+const colsStock = [
+  { h: 'Código', f: (p) => esc(p.codigo) },
+  { h: 'Nombre', f: (p) => esc(p.nombre) },
+  { h: 'Existencia', n: 1, f: (p) => `<span class="bajo">${N(p.existencia_actual)}</span>` },
+];
+
+async function cargarInicio() {
+  const d = await api('/api/inicio');
+  $('#fecha-hoy').textContent = new Date().toLocaleDateString('es-GT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Guatemala' });
+  $('#ini-n').textContent = d.resumen.ventas;
+  $('#ini-total').textContent = Q(d.resumen.total);
+  tabla($('#t-bajo'), colsStock, d.bajo, 'Ningún producto con stock bajo.');
+  tabla($('#t-agotado'), colsStock, d.agotado, 'Ningún producto agotado.');
+}
+
+const colsVentas = [
+  { h: 'No. venta', f: (v) => esc(v.numero_venta) },
+  { h: 'Fecha', f: (v) => fd(v.fecha) },
+  { h: 'Cliente', f: (v) => esc(v.cliente) },
+  { h: 'Subtotal', n: 1, f: (v) => Q(v.subtotal_general) },
+  { h: 'Descuento', n: 1, f: (v) => Q(v.total_descuentos) },
+  { h: 'IVA', n: 1, f: (v) => Q(v.total_iva) },
+  { h: 'Total', n: 1, f: (v) => Q(v.total_final) },
+  { h: 'Cantidad', n: 1, f: (v) => N(v.cantidad) },
+];
+
+const colsTop = [
+  { h: 'Producto', f: (p) => esc(p.producto) },
+  { h: 'Cantidad vendida', n: 1, f: (p) => N(p.cantidad) },
+  { h: 'Total vendido', n: 1, f: (p) => Q(p.total) },
+];
+
+let datosVentas = [], datosTop = [];
+
+async function cargarVentas() {
+  const d = await api('/api/reportes/ventas', { desde: $('#r-desde').value, hasta: $('#r-hasta').value, formaPago: $('#r-fp').value });
+  datosVentas = d.filas;
+  tabla($('#t-ventas'), colsVentas, d.filas);
+  $('#k-total').textContent = Q(d.resumen.total);
+  $('#k-n').textContent = d.resumen.ventas;
+  $('#k-prom').textContent = Q(d.resumen.promedio);
+}
+
+async function cargarTop() {
+  const d = await api('/api/reportes/top-productos', { desde: $('#p-desde').value, hasta: $('#p-hasta').value });
+  datosTop = d.filas;
+  tabla($('#t-top'), colsTop, d.filas);
+}
+
+let fpListo = false;
+
+async function cargarReportes() {
+  if (!fpListo) {
+    (await api('/api/reportes/formas-pago')).forEach((f) => $('#r-fp').add(new Option(f, f)));
+    fpListo = true;
+  }
+  await Promise.all([cargarVentas(), cargarTop()]);
+}
+
+const colsHist = [
+  { h: 'ID registro', f: (r) => esc(r.id) },
+  { h: 'Fecha', f: (r) => fd(r.fecha) },
+  { h: 'Tipo de movimiento', f: (r) => `<span class="etq ${esc(r.tipo)}">${esc(r.tipo)}</span>`, csv: (r) => r.tipo },
+  { h: 'Referencia', f: (r) => esc(r.referencia) },
+  { h: 'Total', n: 1, f: (r) => Q(r.total) },
+  { h: 'Usuario responsable', f: (r) => esc(r.usuario || '—') },
+];
+
+let datosHist = [];
+
+async function cargarHistorial() {
+  datosHist = await api('/api/historial', { desde: $('#h-desde').value, hasta: $('#h-hasta').value, tipo: $('#h-tipo').value, q: $('#h-q').value.trim() });
+  tabla($('#t-hist'), colsHist, datosHist);
+}
+
+const vistas = { inicio: cargarInicio, reportes: cargarReportes, historial: cargarHistorial };
+
+async function ir() {
+  const v = vistas[location.hash.slice(1)] ? location.hash.slice(1) : 'inicio';
+  for (const k in vistas) $('#v-' + k).hidden = k !== v;
+  document.querySelectorAll('nav a').forEach((a) => {
+    if (a.hash === '#' + v) {
+      a.setAttribute('aria-current', 'page');
+    } else {
+      a.removeAttribute('aria-current');
+    }
+  });
+  aviso('');
+  try {
+    await vistas[v]();
+  } catch (e) {
+    aviso(e.message);
+  }
+}
+
+const seguro = (fn) => async () => {
+  aviso('');
+  try {
+    await fn();
+  } catch (e) {
+    aviso(e.message);
+  }
+};
+
+$('#r-desde').value = $('#p-desde').value = mesIni;
+$('#r-hasta').value = $('#p-hasta').value = hoy;
+$('#r-filtrar').onclick = seguro(cargarVentas);
+$('#p-filtrar').onclick = seguro(cargarTop);
+$('#h-filtrar').onclick = seguro(cargarHistorial);
+$('#h-q').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') $('#h-filtrar').click();
+});
+
+$('#pdf-ventas').onclick = () => {
+  const total = datosVentas.reduce((s, v) => s + Number(v.total_final), 0);
+  pdf('ventas', 'Ventas por período',
+    `Del ${fd($('#r-desde').value)} al ${fd($('#r-hasta').value)} · Pago: ${$('#r-fp').value} · Total: ${Q(total)}`,
+    colsVentas, datosVentas);
+};
+
+$('#pdf-top').onclick = () => pdf('productos-mas-vendidos', 'Productos más vendidos',
+  `Del ${fd($('#p-desde').value)} al ${fd($('#p-hasta').value)}`, colsTop, datosTop);
+
+$('#pdf-hist').onclick = () => pdf('historial', 'Historial',
+  `Tipo: ${$('#h-tipo').value}` + ($('#h-desde').value ? ` · Desde ${fd($('#h-desde').value)}` : '') +
+  ($('#h-hasta').value ? ` · Hasta ${fd($('#h-hasta').value)}` : ''),
+  colsHist, datosHist);
+
+window.addEventListener('hashchange', ir);
+ir();
+</script>
+
+</body>
+</html>
